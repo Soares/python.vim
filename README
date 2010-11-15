@@ -1,0 +1,5 @@
+This is my fork of python_fn.vim, found here:
+http://www.vim.org/scripts/script.php?script_id=30
+Made by Mikael Berth, maintained by Jon Franklin.
+All I've changed is the bindings.
+Eventually I'll write a patch that allows changing the bindings in the vimrc.

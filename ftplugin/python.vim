@@ -25,19 +25,6 @@
 "
 " REQUIREMENTS:
 " vim (>= 7)
-"
-" Shortcuts:
-"   gct      -- Jump to beginning of block
-"   gce      -- Jump to end of block
-"   gcv      -- Select (Visual Line Mode) block
-"   gc<      -- Shift block to left
-"   gc>      -- Shift block to right
-"   gc#      -- Comment selection
-"   gcu      -- Uncomment selection
-"   gcc      -- Select current/previous class
-"   gcd      -- Select current/previous function
-"   gc<up>   -- Jump to previous line with the same/lower indentation
-"   gc<down> -- Jump to next line with the same/lower indentation
 
 " Only do this when not done yet for this buffer
 if exists("b:loaded_py_ftplugin")
@@ -45,98 +32,14 @@ if exists("b:loaded_py_ftplugin")
 endif
 let b:loaded_py_ftplugin = 1
 
-map  gct   :PBoB<CR>
-vmap gct   :<C-U>PBOB<CR>m'gv``
-map  gce   :PEoB<CR>
-vmap gce   :<C-U>PEoB<CR>m'gv``
-
-map  gcv   gctVgce
-map  gc<   gctVgce<
-vmap gc<   <
-map  gc>   gctVgce>
-vmap gc>   >
-
-map  gc#   :call PythonCommentSelection()<CR>
-vmap gc#   :call PythonCommentSelection()<CR>
-map  gcu   :call PythonUncommentSelection()<CR>
-vmap gcu   :call PythonUncommentSelection()<CR>
-
-map  gcc   :call PythonSelectObject("class")<CR>
-map  gcd   :call PythonSelectObject("function")<CR>
-
-map  gc<up>    :call PythonNextLine(-1)<CR>
-map  gc<down>  :call PythonNextLine(1)<CR>
-" You may prefer use <s-up> and <s-down>... :-)
-
-" jump to previous class
-map  gcJ   :call PythonDec("class", -1)<CR>
-vmap gcJ   :call PythonDec("class", -1)<CR>
-
-" jump to next class
-map  gcj   :call PythonDec("class", 1)<CR>
-vmap gcj   :call PythonDec("class", 1)<CR>
-
-" jump to previous function
-map  gcF   :call PythonDec("function", -1)<CR>
-vmap gcF   :call PythonDec("function", -1)<CR>
-
-" jump to next function
-map  gcf   :call PythonDec("function", 1)<CR>
-vmap gcf   :call PythonDec("function", 1)<CR>
-
-
-
-" Menu entries
-nmenu <silent> &Python.Update\ IM-Python\ Menu 
-    \:call UpdateMenu()<CR>
-nmenu &Python.-Sep1- :
-nmenu <silent> &Python.Beginning\ of\ Block<Tab>gct 
-    \gct
-nmenu <silent> &Python.End\ of\ Block<Tab>gce 
-    \gce
-nmenu &Python.-Sep2- :
-nmenu <silent> &Python.Shift\ Block\ Left<Tab>gc< 
-    \gc<
-vmenu <silent> &Python.Shift\ Block\ Left<Tab>gc< 
-    \gc<
-nmenu <silent> &Python.Shift\ Block\ Right<Tab>gc> 
-    \gc>
-vmenu <silent> &Python.Shift\ Block\ Right<Tab>gc> 
-    \gc>
-nmenu &Python.-Sep3- :
-vmenu <silent> &Python.Comment\ Selection<Tab>gc# 
-    \gc#
-nmenu <silent> &Python.Comment\ Selection<Tab>gc# 
-    \gc#
-vmenu <silent> &Python.Uncomment\ Selection<Tab>gcu 
-    \gcu
-nmenu <silent> &Python.Uncomment\ Selection<Tab>gcu 
-    \gcu
-nmenu &Python.-Sep4- :
-nmenu <silent> &Python.Previous\ Class<Tab>gcJ 
-    \gcJ
-nmenu <silent> &Python.Next\ Class<Tab>gcj 
-    \gcj
-nmenu <silent> &Python.Previous\ Function<Tab>gcF 
-    \gcF
-nmenu <silent> &Python.Next\ Function<Tab>gcf 
-    \gcf
-nmenu &Python.-Sep5- :
-nmenu <silent> &Python.Select\ Block<Tab>gcv 
-    \gcv
-nmenu <silent> &Python.Select\ Function<Tab>gcd 
-    \gcd
-nmenu <silent> &Python.Select\ Class<Tab>gcc 
-    \gcc
-nmenu &Python.-Sep6- :
-nmenu <silent> &Python.Previous\ Line\ wrt\ indent<Tab>gc<up> 
-    \gc<up>
-nmenu <silent> &Python.Next\ Line\ wrt\ indent<Tab>gc<down> 
-    \gc<down>
-
-:com! PBoB execute "normal ".PythonBoB(line('.'), -1, 1)."G"
-:com! PEoB execute "normal ".PythonBoB(line('.'), 1, 1)."G"
-:com! UpdateMenu call UpdateMenu()
+noremap <silent> <leader>w :call PythonDec("function", 1)<CR>2w
+noremap <silent> <leader>b 0:call PythonDec("function", -1)<CR>2w
+noremap <silent> <leader>W :call PythonDec("class", 1)<CR>2w
+noremap <silent> <leader>B 0:call PythonDec("class", -1)<CR>2w
+noremap <silent> <leader>vf :call PythonSelectObject("function")<CR>
+noremap <silent> <leader>vc :call PythonSelectObject("class")<CR>
+noremap <silent> <leader>ff :call PythonSelectObject("function")<CR>zf
+noremap <silent> <leader>fc :call PythonSelectObject("class")<CR>zf
 
 
 " Go to a block boundary (-1: previous, 1: next)
@@ -185,11 +88,11 @@ function! PythonDec(obj, direction)
   else
     let objregexp = "^\\s*def\\s\\+[a-zA-Z0-9_]\\+\\s*(\\_[^:#]*)\\s*:"
   endif
-  let flag = "W"
+  let flags = "W"
   if (a:direction == -1)
-    let flag = flag."b"
+    let flags = flags . "b"
   endif
-  let res = search(objregexp, flag)
+  let match = search(objregexp, flags)
 endfunction
 
 
@@ -443,4 +346,3 @@ endfunction
 
 
 " vim:set et sts=2 sw=2:
-
